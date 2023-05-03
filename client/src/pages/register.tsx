@@ -2,15 +2,18 @@ import { app } from "../../firebaseConfig";
 import { useState, useEffect } from "react";
 import {
   getAuth,
+  onAuthStateChanged,
   createUserWithEmailAndPassword,
   GoogleAuthProvider,
   GithubAuthProvider,
   signInWithPopup,
 } from "firebase/auth";
 import { useRouter } from "next/router";
+import { FirebaseApp } from "firebase/app";
 
 export default function Register() {
   const auth = getAuth(app); // get the auth object from firebase
+  const user = auth.currentUser; // get the current user if there is one
   const router = useRouter(); // get the router object from nextjs
   const googleProvider = new GoogleAuthProvider(); // create a google provider
   const githubProvider = new GithubAuthProvider(); // create a github provider
@@ -19,29 +22,63 @@ export default function Register() {
 
   // Email and password sign up
   const signUp = async () => {
-    createUserWithEmailAndPassword(auth, email, password).then((response) => {
-      console.log(response.user);
-      router.push("/"); // if the user is created, redirect to the home page
-    });
+    try {
+      // Create user with email and password
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+      // Get user token
+      const userToken = await userCredential.user.getIdToken(true); // true = refresh token
+      // Store user token in session storage
+      sessionStorage.setItem("Token", userToken);
+      // Redirect user to home page
+      router.push("/");
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   // Google sign up
   const googleSignUp = async () => {
-    signInWithPopup(auth, googleProvider).then((response) => {
-      console.log(response.user);
+    try {
+      const userCredential = await signInWithPopup(auth, googleProvider);
+      const userToken = await userCredential.user.getIdToken(true);
+      sessionStorage.setItem("Token", userToken);
       router.push("/");
-    });
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   // Github sign up
   const githubSignUp = async () => {
-    signInWithPopup(auth, githubProvider).then((response) => {
-      console.log(response.user);
+    try {
+      const userCredential = await signInWithPopup(auth, githubProvider);
+      const userToken = await userCredential.user.getIdToken(true);
+      sessionStorage.setItem("Token", userToken);
       router.push("/");
-    });
+    } catch (error) {
+      console.log(error);
+    }
   };
 
-  useEffect(() => {}, []);
+  onAuthStateChanged(auth, (user) => {
+    if (user) {
+      // user is logged in
+    } else {
+      // user is logged out
+    }
+  });
+
+  useEffect(() => {
+    let token = sessionStorage.getItem("Token");
+
+    if (token) {
+      router.push("/");
+    }
+  }, []);
 
   return (
     <div className="mt-5 flex flex-col items-center align-middle">
