@@ -9,7 +9,7 @@ export const createUser = async (req: Request, res: Response) => {
     try {
         // get user data from request body
         const { email } = req.body;
-
+          
         // create user in database using prisma client
         const user = await prisma.user.create({
             data: {
@@ -28,6 +28,11 @@ export const createUser = async (req: Request, res: Response) => {
         });
     }
 }
+
+export const getUser = async (req: Request, res: Response) => {
+  const data = await prisma.user.findMany()
+  res.json(data);
+};
 
 // update user in database (for now uses email as unique identifier, will change to id later)
 export const updateUser = async (req: Request, res: Response) => {

@@ -1,11 +1,9 @@
 import express, { json } from "express";
-import { PrismaClient } from "@prisma/client";
 import {Router as userRouter} from "./src/routes/userRoutes"
 
-const prisma = new PrismaClient(); // create prisma client
 const app = express(); // create express app
 
-app.use(json()); // use express json middleware to parse json body
+app.use(express.json()); // use express json middleware to parse request body
 
 // middleware to allow cross origin requests from any domain
 app.use(function (req, res, next) {
