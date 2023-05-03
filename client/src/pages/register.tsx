@@ -9,7 +9,8 @@ import {
   signInWithPopup,
 } from "firebase/auth";
 import { useRouter } from "next/router";
-import { FirebaseApp } from "firebase/app";
+import { createUser } from "@/api/userDataHandler";
+import NavBar from "@/components/NavBar";
 
 export default function Register() {
   const auth = getAuth(app); // get the auth object from firebase
@@ -35,6 +36,8 @@ export default function Register() {
       sessionStorage.setItem("Token", userToken);
       // Redirect user to home page
       router.push("/");
+      // Send email to data handler
+      createUser(email);
     } catch (error) {
       console.log(error);
     }
@@ -81,8 +84,10 @@ export default function Register() {
   }, []);
 
   return (
-    <div className="mt-5 flex flex-col items-center align-middle">
-      <h1>Register</h1>
+    <div className="flex flex-col items-center align-middle">
+      <NavBar />
+
+      <h1 className="mt-5">Register</h1>
 
       <input
         type="email"

@@ -1,6 +1,7 @@
-import { app } from "../../firebaseConfig";
+import NavBar from "@/components/NavBar";
 import { useEffect } from "react";
 import { useRouter } from "next/router";
+
 export default function Home() {
   const router = useRouter();
 
@@ -13,23 +14,10 @@ export default function Home() {
   }, []);
 
   return (
-    <main className="h-screen bg-bas">
-      <h1 className="flex justify-center mt-2 text-3xl">Home</h1>
+    <main>
+      <NavBar />
 
-      <div className="flex flex-col items-center h-screen">
-        <input
-          type="text"
-          placeholder="Name"
-          className="input input-bordered w-full max-w-md mt-5"
-        />
-        <input
-          type="text"
-          placeholder="Age"
-          className="input input-bordered w-full max-w-md mt-5"
-        />
-
-        <button className="btn w-full max-w-md mt-5">ADD</button>
-      </div>
+      <h1 className="text-6xl mt-20 text-center"> Welcome user</h1>
     </main>
   );
 }
