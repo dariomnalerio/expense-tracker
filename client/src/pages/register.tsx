@@ -8,23 +8,24 @@ import {
 import { useRouter } from "next/router";
 import { createUser } from "@/api/userDataHandler";
 import NavBar from "@/components/NavBar";
+import { useStore } from "../context/Store";
 
 export default function Register() {
   const auth = getAuth(app); // get the auth object from firebase
   const user = auth.currentUser; // get the current user if there is one
+
   const router = useRouter(); // get the router object from nextjs
+
   const [email, setEmail] = useState(""); // set the email state
   const [password, setPassword] = useState(""); // set the password state
+
+  const setIdentifier = useStore((state) => state.setIdentifier);
 
   // Email and password sign up
   const signUp = async () => {
     try {
       // Create user with email and password
-      const userCredential = await createUserWithEmailAndPassword(
-        auth,
-        email,
-        password
-      );
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       // Get user token
       const userData = await userCredential.user // true = refresh token
       // Store user token in session storage
@@ -33,6 +34,9 @@ export default function Register() {
       router.push("/");
       // Send email to data handler
       createUser(email);
+
+      setIdentifier(userData.uid);
+
     } catch (error) {
       console.log(error);
     }
