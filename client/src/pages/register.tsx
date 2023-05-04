@@ -4,9 +4,6 @@ import {
   getAuth,
   onAuthStateChanged,
   createUserWithEmailAndPassword,
-  GoogleAuthProvider,
-  GithubAuthProvider,
-  signInWithPopup,
 } from "firebase/auth";
 import { useRouter } from "next/router";
 import { createUser } from "@/api/userDataHandler";
@@ -16,8 +13,6 @@ export default function Register() {
   const auth = getAuth(app); // get the auth object from firebase
   const user = auth.currentUser; // get the current user if there is one
   const router = useRouter(); // get the router object from nextjs
-  const googleProvider = new GoogleAuthProvider(); // create a google provider
-  const githubProvider = new GithubAuthProvider(); // create a github provider
   const [email, setEmail] = useState(""); // set the email state
   const [password, setPassword] = useState(""); // set the password state
 
@@ -31,37 +26,13 @@ export default function Register() {
         password
       );
       // Get user token
-      const userToken = await userCredential.user.getIdToken(true); // true = refresh token
+      const userData = await userCredential.user // true = refresh token
       // Store user token in session storage
-      sessionStorage.setItem("Token", userToken);
+      sessionStorage.setItem("Token", JSON.stringify(userData));
       // Redirect user to home page
       router.push("/");
       // Send email to data handler
       createUser(email);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  // Google sign up
-  const googleSignUp = async () => {
-    try {
-      const userCredential = await signInWithPopup(auth, googleProvider);
-      const userToken = await userCredential.user.getIdToken(true);
-      sessionStorage.setItem("Token", userToken);
-      router.push("/");
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  // Github sign up
-  const githubSignUp = async () => {
-    try {
-      const userCredential = await signInWithPopup(auth, githubProvider);
-      const userToken = await userCredential.user.getIdToken(true);
-      sessionStorage.setItem("Token", userToken);
-      router.push("/");
     } catch (error) {
       console.log(error);
     }
@@ -106,12 +77,6 @@ export default function Register() {
 
       <button className="btn w-full max-w-md mt-3" onClick={signUp}>
         Sign Up
-      </button>
-      <button className="btn w-full max-w-md mt-3" onClick={googleSignUp}>
-        Google Sign Up
-      </button>
-      <button className="btn w-full max-w-md mt-3" onClick={githubSignUp}>
-        Github Sign Up
       </button>
     </div>
   );

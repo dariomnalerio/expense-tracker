@@ -29,9 +29,18 @@ export const createUser = async (req: Request, res: Response) => {
     }
 }
 
-export const getUser = async (req: Request, res: Response) => {
+export const getUsers = async (req: Request, res: Response) => {
   const data = await prisma.user.findMany()
   res.json(data);
+};
+
+export const getUser = async (req: Request, res: Response) => {
+
+  const { uid } = req.body;
+
+  const data = await prisma.user.findUnique({
+    where: { uid: uid },
+});
 };
 
 // update user in database (for now uses email as unique identifier, will change to id later)
@@ -54,4 +63,14 @@ export const updateUser = async (req: Request, res: Response) => {
   });
 
     res.json(updatedUser);
+};
+
+export const deleteUser = async (req: Request, res: Response) => {
+
+  const { uid } = req.body;
+
+  const data = await prisma.user.delete({
+      where: { uid: uid },
+  })
+  res.json("Teacher Deleted")
 };
