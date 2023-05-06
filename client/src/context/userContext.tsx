@@ -9,7 +9,7 @@ export const CheckRegistration= () =>{
         let token = sessionStorage.getItem("Token");
         // If there is no token, redirect to register page
         if (!token) {
-          router.push("/register");
+          // router.push("/register");
         }
       }, []);
 }
