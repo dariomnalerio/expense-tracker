@@ -1,8 +1,8 @@
 import axios from "axios";
 
-export const createUser = async (email: string) => {
+export const createUser = async (uid: string, email: string) => {
   try {
-    const data = { email };
+    const data = { uid, email };
     const response = await axios.post("http://localhost:3000/user/", data);
     return response.data;
   } catch (error) {
@@ -11,9 +11,14 @@ export const createUser = async (email: string) => {
   }
 };
 
-export const updateUser = async (email: string, name: string, age: number) => {
+export const updateUser = async (
+  uid: string,
+  email: string,
+  name: string,
+  age: number
+) => {
   try {
-    const data = { email, name, age };
+    const data = { uid, email, name, age};
     const response = await axios.put("http://localhost:3000/user/", data);
     return response.data;
   } catch (error) {

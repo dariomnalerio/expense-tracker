@@ -12,7 +12,7 @@ datasource db {
 
 model User {
   id    Int      @id @default(autoincrement())
-  uid   String? // firebase uid
+  uid   String?  @unique // firebase uid
   email String   @unique
   name  String?
   age   Int?

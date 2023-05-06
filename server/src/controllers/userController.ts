@@ -1,76 +1,116 @@
 import { Request, Response } from "express";
 import { PrismaClient } from "@prisma/client";
+import {
+  createUser,
+  getUsers,
+  getUser,
+  updateUser,
+  deleteUser,
+} from "../services/userServices";
 
 const prisma = new PrismaClient();
 
-// create user in database (gets user data from request body)
-export const createUser = async (req: Request, res: Response) => {
+export const createUserController = async (req: Request, res: Response) => {
+  try {
+    const { email, uid } = req.body; // get email and uid from request body
+    const result = await createUser(uid, email); // create user in db
 
-    try {
-        // get user data from request body
-        const { email } = req.body;
-          
-        // create user in database using prisma client
-        const user = await prisma.user.create({
-            data: {
-                email,
-            },
-        });
-
-        res.status(201).json({
-            message: "User created successfully",
-            user,
-        });
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({
-            message: "An error ocurred while creating user",
-        });
+    // if user already exists, return 409
+    if (!result) {
+      return res.status(409).json({
+        message: "User already exists",
+      });
+    } else {
+      res.status(201).json(result);
     }
-}
-
-export const getUsers = async (req: Request, res: Response) => {
-  const data = await prisma.user.findMany()
-  res.json(data);
+  } catch (error) {
+    console.error(error);
+    // if an http error occurs, return 500
+    res.status(500).json({
+      message: "An error ocurred while creating user",
+    });
+  }
 };
 
-export const getUser = async (req: Request, res: Response) => {
+export const getUsersController = async (req: Request, res: Response) => {
+  try {
+    const result = await getUsers(); // get users from db
 
-  const { uid } = req.body;
-
-  const data = await prisma.user.findUnique({
-    where: { uid: uid },
-});
+    // if no users are found, return 404
+    if (!result) {
+      return res.status(404).json({
+        message: "No users found",
+      });
+    } else {
+      res.status(200).json(result);
+    }
+  } catch (error) {
+    console.error(error);
+    // if an http error occurs, return 500
+    res.status(500).json({
+      message: "An error ocurred while getting users",
+    });
+  }
 };
 
-// update user in database (for now uses email as unique identifier, will change to id later)
-export const updateUser = async (req: Request, res: Response) => {
-  // get user data from request body
-  const { email, name, age } = req.body;
-
-  // get user from db
-  const user = await prisma.user.findUnique({
-    where: { email },
-  });
-
-  // update user in database using  prisma client
-  const updatedUser = await prisma.user.update({
-    where: { email },
-    data: {
-      name: name || user?.name,
-      age: age || user?.age,
-    },
-  });
-
-    res.json(updatedUser);
+export const getUserController = async (req: Request, res: Response) => {
+  try {
+    const { uid } = req.body;
+    const result = await getUser(uid); // get user from db
+    if (!result) {
+      return res.status(404).json({
+        message: "No user found",
+      });
+    } else {
+      res.status(200).json(result);
+    }
+  } catch (error) {
+    console.error(error);
+    // if an http error occurs, return 500
+    res.status(500).json({
+      message: "An error ocurred while getting user",
+    });
+  }
 };
 
-export const deleteUser = async (req: Request, res: Response) => {
+export const updateUserController = async (req: Request, res: Response) => {
+  try {
+    const { uid, email, name, age } = req.body;
+    const result = await updateUser(uid, email, name, age);
 
-  const { uid } = req.body;
+    if (!result) {
+      return res.status(404).json({
+        message: "No user found",
+      });
+    } else {
+      res.status(200).json(result);
+    }
+  } catch (error) {
+    console.error(error);
+    // if an http error occurs, return 500
+    res.status(500).json({
+      message: "An error ocurred while updating user",
+    });
+  }
+};
 
-  const data = await prisma.user.delete({
-      where: { uid: uid },
-  })
-  res.json("Teacher Deleted")
+export const deleteUserController = async (req: Request, res: Response) => {
+  try {
+    const { uid } = req.body;
+    const result = await deleteUser(uid);
+
+    if (!result) {
+      return res.status(404).json({
+        message: "No user found",
+      });
+    } else {
+      res.status(200).json(result);
+    }
+  } catch (error) {
+    console.error(error);
+    // if an http error occurs, return 500
+    res.status(500).json({
+      message: "An error ocurred while deleting user",
+    });
+  }
 };

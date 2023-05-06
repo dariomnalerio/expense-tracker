@@ -33,7 +33,7 @@ export default function Register() {
       // Redirect user to home page
       router.push("/");
       // Send email to data handler
-      createUser(email);
+      createUser(userData.uid, userData.email as string); // since user is already registered, email cannot be null
 
       setIdentifier(userData.uid);
 
