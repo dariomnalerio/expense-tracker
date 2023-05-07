@@ -1,23 +1,23 @@
 import { PrismaClient } from "@prisma/client";
+import { Console } from "console";
+import {UserCredential } from "firebase/auth";
 
 const prisma = new PrismaClient();
 
-export const createUser = async (uid: string, email: string) => {
-  // check if user already exists in database
-  const userExists = await prisma.user.findUnique({
-    where: { uid: uid },
-  });
+interface User {
+  email: string;
+  uid: string;
+}
 
-  // if user already exists, return null
-  if (userExists) {
-    return null;
-  }
 
+export const createUser = async (req: any) => {
+
+  console.log(req)
   // if user doesn't exist, create user in database using prisma client
   const user = await prisma.user.create({
     data: {
-      email,
-      uid,
+      email: req.body.email,
+      uid: req.body.uid,
     },
   });
 
@@ -35,9 +35,9 @@ export const getUsers = async () => {
   return users;
 };
 
-export const getUser = async (uid: string) => {
+export const getUser = async (req: any) => {
   const user = await prisma.user.findUnique({
-    where: { uid: uid },
+    where: { uid: req.body.uid },
   });
 
   // if no user is found, return null
@@ -48,14 +48,9 @@ export const getUser = async (uid: string) => {
   return user;
 };
 
-export const updateUser = async (
-  uid: string,
-  email: string,
-  name: string | null,
-  age: number | null
-) => {
+export const updateUser = async (req: any) => {
   const user = await prisma.user.findUnique({
-    where: { uid },
+    where: { uid: req.body.uid },
   });
 
   // if no user is found, return null
@@ -65,19 +60,19 @@ export const updateUser = async (
 
   // update user in database using  prisma client
   const updatedUser = await prisma.user.update({
-    where: { uid },
+    where: { uid: req.body.uid },
     data: {
-      name: name || user?.name,
-      age: age || user?.age,
+      name: req.body.name || user?.name,
+      age: req.body.age || user?.age,
     },
   });
 
   return updatedUser;
 };
 
-export const deleteUser = async (uid: string) => {
+export const deleteUser = async (req: any) => {
   const user = await prisma.user.findUnique({
-    where: { uid },
+    where: { uid: req.body.uid },
   });
 
   // if no user is found, return null
@@ -87,7 +82,7 @@ export const deleteUser = async (uid: string) => {
 
   // delete user from database using prisma client
   const deletedUser = await prisma.user.delete({
-    where: { uid },
+    where: { uid: req.body.uid },
   });
 
   return deletedUser;

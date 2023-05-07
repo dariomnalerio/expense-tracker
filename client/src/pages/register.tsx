@@ -27,15 +27,16 @@ export default function Register() {
       // Create user with email and password
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       // Get user token
-      const userData = await userCredential.user // true = refresh token
+      const userData = await userCredential // true = refresh token
       // Store user token in session storage
       sessionStorage.setItem("Token", JSON.stringify(userData));
+      
       // Redirect user to home page
       router.push("/");
       // Send email to data handler
-      createUser(userData.uid, userData.email as string); // since user is already registered, email cannot be null
+      createUser(userData.user); // since user is already registered, email cannot be null
 
-      setIdentifier(userData.uid);
+      setIdentifier(userData);
 
     } catch (error) {
       console.log(error);

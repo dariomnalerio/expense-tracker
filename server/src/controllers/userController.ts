@@ -10,10 +10,14 @@ import {
 
 const prisma = new PrismaClient();
 
-export const createUserController = async (req: Request, res: Response) => {
+
+interface User {
+  email: string;
+  uid: string;
+}
+export const createUserController = async (req: User, res: Response) => {
   try {
-    const { email, uid } = req.body; // get email and uid from request body
-    const result = await createUser(uid, email); // create user in db
+    const result = await createUser(req); // create user in db
 
     // if user already exists, return 409
     if (!result) {
@@ -75,8 +79,7 @@ export const getUserController = async (req: Request, res: Response) => {
 
 export const updateUserController = async (req: Request, res: Response) => {
   try {
-    const { uid, email, name, age } = req.body;
-    const result = await updateUser(uid, email, name, age);
+    const result = await updateUser(req);
 
     if (!result) {
       return res.status(404).json({
