@@ -1,9 +1,9 @@
 import axios from "axios";
+import { User, UserCredential } from "firebase/auth";
 
-export const createUser = async (uid: string, email: string) => {
+export const createUser = async (req: User) => {
   try {
-    const data = { uid, email };
-    const response = await axios.post("http://localhost:3000/user/", data);
+    const response = await axios.post("http://localhost:3000/user/", req);
     return response.data;
   } catch (error) {
     console.error(error);
