@@ -6,9 +6,11 @@ import {
   createUserWithEmailAndPassword,
 } from "firebase/auth";
 import { useRouter } from "next/router";
-import { createUser } from "@/api/userDataHandler";
+import { createUser } from "@/services/userDataHandler";
 import NavBar from "@/components/NavBar";
 import { useStore } from "../context/Store";
+import * as jwt from "jsonwebtoken";
+import { getIdToken } from "firebase/auth";
 
 export default function Register() {
   const auth = getAuth(app); // get the auth object from firebase
@@ -25,19 +27,32 @@ export default function Register() {
   const signUp = async () => {
     try {
       // Create user with email and password
-      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+
       // Get user token
-      const userData = await userCredential // true = refresh token
+      const userData = await userCredential.user;
+
+      
       // Store user token in session storage
       sessionStorage.setItem("Token", JSON.stringify(userData));
+      console.log(userData);
       
       // Redirect user to home page
       router.push("/");
-      // Send email to data handler
-      createUser(userData.user); // since user is already registered, email cannot be null
+      
+      // Create user in database
+      const userEmail = userData.email;
+      const userUid = userData.uid;
+
+      const userToken = await getIdToken(userData);
+
+      await createUser(userEmail, userUid, userToken);
 
       setIdentifier(userData);
-
     } catch (error) {
       console.log(error);
     }

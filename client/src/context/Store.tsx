@@ -1,13 +1,14 @@
+import { User, UserCredential } from 'firebase/auth';
 import  {create} from 'zustand'
 
 
 interface MyStoreState {
-  Identifier: string;
-  setIdentifier: (newValue: string) => void;
+  Identifier: User | null;
+  setIdentifier: (newValue: User) => void;
 }
 
 
 export const useStore = create<MyStoreState>((set) => ({
-  Identifier: '',
-  setIdentifier: (newValue: string) => set({ Identifier: newValue }),
+  Identifier: null,
+  setIdentifier: (newValue: User) => set({ Identifier: newValue }),
 }))

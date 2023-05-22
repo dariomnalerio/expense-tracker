@@ -4,7 +4,8 @@ import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import { useEffect, useState } from "react";
 import { app } from "../../firebaseConfig";
 import { useRouter } from "next/router";
-
+import { isJSDocThrowsTag } from "typescript";
+import * as jwt from 'jsonwebtoken';
 
 export default function Login() {
 
@@ -20,13 +21,15 @@ export default function Login() {
     try {
       const userCredential =  await signInWithEmailAndPassword(auth, email, password);
 
-      const userData = await userCredential.user // true = refresh token
+      const userData = await userCredential // true = refresh token
 
       sessionStorage.setItem("Token", JSON.stringify(userData));
 
       router.push("/");
 
-      setIdentifier(userData.uid)
+      const access_token = jwt.sign(userData, process.env.ACCESS_TOKEN_SECRET || '')
+
+      setIdentifier(access_token)
     }
     catch (error) {
       console.log(error);

@@ -1,7 +1,7 @@
 import { app } from "../../firebaseConfig";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import { updateUser } from "@/api/userDataHandler";
+import { updateUser } from "@/services/userDataHandler";
 import NavBar from "@/components/NavBar";
 export default function Home() {
   const router = useRouter();
