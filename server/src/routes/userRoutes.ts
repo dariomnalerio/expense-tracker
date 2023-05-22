@@ -5,6 +5,7 @@ const {
   updateUserController,
   deleteUserController,
 } = require("../controllers/userController");
+import { verifyJwt } from "../../middleware";
 
 const express = require("express");
 const Router = express.Router();

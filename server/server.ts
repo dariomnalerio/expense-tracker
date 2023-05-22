@@ -1,19 +1,25 @@
 import express, { json } from "express";
 import {Router as userRouter} from "./src/routes/userRoutes"
+import { verifyJwt } from "./middleware";
+import admin  from 'firebase-admin';
+
+import cors from 'cors';
+
 
 const app = express(); // create express app
 
 app.use(express.json()); // use express json middleware to parse request body
 
-// middleware to allow cross origin requests from any domain
-app.use(function (req, res, next) {
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header(
-    "Access-Control-Allow-Headers",
-    "Origin, X-Requested-With, Content-Type, Accept"
-  );
-  next();
+app.use(cors())
+  
+  // initializes firebase admin account
+  var serviceAccount = require("./serviceAccountKey.json");
+
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount),
+  databaseURL: "https://learn-aba-default-rtdb.firebaseio.com"
 });
+
 
 // define a route handler for the default home page
 app.get("/", async (req, res) => {
@@ -21,7 +27,7 @@ app.get("/", async (req, res) => {
 });
 
 // route handler for the updateUser endpoint
-app.use("/user", userRouter)
+app.use("/user", verifyJwt, userRouter)
 
 
 // start express server

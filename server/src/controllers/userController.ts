@@ -16,8 +16,9 @@ interface User {
   uid: string;
 }
 export const createUserController = async (req: User, res: Response) => {
+  
   try {
-    const result = await createUser(req); // create user in db
+    const result = await createUser(req, res); // create user in db
 
     // if user already exists, return 409
     if (!result) {

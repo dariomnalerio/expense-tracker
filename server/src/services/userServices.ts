@@ -1,5 +1,5 @@
 import { PrismaClient } from "@prisma/client";
-import { Console } from "console";
+import { Console, error } from "console";
 import {UserCredential } from "firebase/auth";
 
 const prisma = new PrismaClient();
@@ -10,7 +10,7 @@ interface User {
 }
 
 
-export const createUser = async (req: any) => {
+export const createUser = async (req: any, res: any) => {
 
   console.log(req)
   // if user doesn't exist, create user in database using prisma client

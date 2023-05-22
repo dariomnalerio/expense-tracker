@@ -1,3 +1,6 @@
 node_modules
 # Keep environment variables out of version control
 .env
+serviceAccountKey.json
+firebaseConfig.ts
+learn-aba-firebase-adminsdk-3nyww-eefd06a9af
