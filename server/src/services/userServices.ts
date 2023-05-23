@@ -12,7 +12,6 @@ interface User {
 
 export const createUser = async (req: any, res: any) => {
 
-  console.log(req)
   // if user doesn't exist, create user in database using prisma client
   const user = await prisma.user.create({
     data: {
@@ -50,7 +49,7 @@ export const getUser = async (req: any) => {
 
 export const updateUser = async (req: any) => {
   const user = await prisma.user.findUnique({
-    where: { uid: req.body.uid },
+    where: { email: req.body.email },
   });
 
   // if no user is found, return null
@@ -60,10 +59,10 @@ export const updateUser = async (req: any) => {
 
   // update user in database using  prisma client
   const updatedUser = await prisma.user.update({
-    where: { uid: req.body.uid },
+    where: { email: req.body.email },
     data: {
       name: req.body.name || user?.name,
-      age: req.body.age || user?.age,
+      age: parseFloat(req.body.age) || user?.age,
     },
   });
 
