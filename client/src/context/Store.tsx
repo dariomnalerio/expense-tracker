@@ -3,12 +3,15 @@ import  {create} from 'zustand'
 
 
 interface MyStoreState {
-  Identifier: User | null;
-  setIdentifier: (newValue: User) => void;
+  IdentifierEmail: string | null;
+  setIdentifierEmail: (newValue: string | null) => void;
+  IdentifierToken: string | null;
+  setIdentifierToken: (newValue: string | null) => void;
 }
 
-
 export const useStore = create<MyStoreState>((set) => ({
-  Identifier: null,
-  setIdentifier: (newValue: User) => set({ Identifier: newValue }),
-}))
+  IdentifierEmail: null,
+  setIdentifierEmail: (newValue: string | null) => set({ IdentifierEmail: newValue }),
+  IdentifierToken: null,
+  setIdentifierToken: (newValue: string | null) => set({ IdentifierToken: newValue })
+}));

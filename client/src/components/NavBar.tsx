@@ -19,6 +19,9 @@ export default function NavBar() {
           <li>
             <Link href={"/profile"}>Edit profile</Link>
           </li>
+          <li>
+            <Link href={"/logOut"}>logOut</Link>
+          </li>
         </ul>
       </div>
     </div>

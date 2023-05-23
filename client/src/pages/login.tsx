@@ -5,14 +5,14 @@ import { useEffect, useState } from "react";
 import { app } from "../../firebaseConfig";
 import { useRouter } from "next/router";
 import { isJSDocThrowsTag } from "typescript";
-import * as jwt from 'jsonwebtoken';
+import { getIdToken, getIdTokenResult } from "firebase/auth";
 
 export default function Login() {
 
   const auth = getAuth(app); // get the auth object from firebase
   const router = useRouter(); // get the router object from nextjs
 
-  const setIdentifier = useStore((state) => state.setIdentifier)
+  const IdentifierStore = useStore()
 
   const [email, setEmail] = useState(""); // set the email state
   const [password, setPassword] = useState(""); // set the password state
@@ -21,15 +21,20 @@ export default function Login() {
     try {
       const userCredential =  await signInWithEmailAndPassword(auth, email, password);
 
-      const userData = await userCredential // true = refresh token
+      const userData = await userCredential.user // true = refresh token
 
       sessionStorage.setItem("Token", JSON.stringify(userData));
 
       router.push("/");
+      
 
-      const access_token = jwt.sign(userData, process.env.ACCESS_TOKEN_SECRET || '')
+      const userToken = await getIdToken(userData);
 
-      setIdentifier(access_token)
+      const userTest = await userData.getIdTokenResult(true)
+      
+      IdentifierStore.setIdentifierEmail(userData.email)
+      IdentifierStore.setIdentifierToken(userToken)
+
     }
     catch (error) {
       console.log(error);

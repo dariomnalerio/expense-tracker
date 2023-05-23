@@ -23,14 +23,23 @@ export const createUser = async (email: string | null, uid: string, token: strin
 };
 
 export const updateUser = async (
-  uid: string,
   email: string,
   name: string,
-  age: number
+  age: string,
+  token: string
 ) => {
   try {
-    const data = { uid, email, name, age };
-    const response = await axios.put("http://localhost:3000/user/", data);
+    const data = { email, name, age };
+
+    const headers = {
+      headers:{
+        Authorization: token
+      }
+    }
+
+    console.log(token)
+    const response = await axios.put("http://localhost:3000/user/", data, headers)
+
     return response.data;
   } catch (error) {
     console.error(error);

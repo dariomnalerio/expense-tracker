@@ -21,7 +21,7 @@ export default function Register() {
   const [email, setEmail] = useState(""); // set the email state
   const [password, setPassword] = useState(""); // set the password state
 
-  const setIdentifier = useStore((state) => state.setIdentifier);
+  const setIdentifierEmail = useStore((state) => state.setIdentifierEmail);
 
   // Email and password sign up
   const signUp = async () => {
@@ -39,7 +39,6 @@ export default function Register() {
       
       // Store user token in session storage
       sessionStorage.setItem("Token", JSON.stringify(userData));
-      console.log(userData);
       
       // Redirect user to home page
       router.push("/");
@@ -47,12 +46,10 @@ export default function Register() {
       // Create user in database
       const userEmail = userData.email;
       const userUid = userData.uid;
-
-      const userToken = await getIdToken(userData);
-
+      const userToken = await getIdToken(userData); // needed to validate user
       await createUser(userEmail, userUid, userToken);
 
-      setIdentifier(userData);
+      setIdentifierEmail(userEmail);
     } catch (error) {
       console.log(error);
     }

@@ -3,8 +3,23 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { updateUser } from "@/services/userDataHandler";
 import NavBar from "@/components/NavBar";
+import { identifierToKeywordKind } from "typescript";
+import { useStore } from "@/context/Store";
 export default function Home() {
   const router = useRouter();
+
+  const userStore = useStore(); // get the email from the store
+  const identifierEmail = userStore.IdentifierEmail
+  const identifierToken = userStore.IdentifierToken
+
+  const handleUpdateUser = () => {
+    if (identifierEmail != null && identifierToken != null) {
+      updateUser(identifierEmail, name, age, identifierToken);
+    } else {
+      console.log("No email/token found");
+      return;
+    }
+  }
 
   useEffect(() => {
     let token = sessionStorage.getItem("Token");
@@ -38,7 +53,7 @@ export default function Home() {
           value={age}
         />
 
-        <button className="btn w-full max-w-md mt-5">Update</button>
+        <button className="btn w-full max-w-md mt-5" onClick={handleUpdateUser}>Update</button>
       </div>
     </main>
   );
